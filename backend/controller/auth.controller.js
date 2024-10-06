@@ -12,11 +12,11 @@ export const signup = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user) {
-      return res.status(400).send("User already exists");
+      return res.status(400).json({ message: "User already exists" });
     }
 
     if (password !== confirmPassword) {
-      return res.status(400).send("passwords do not match");
+      return res.status(400).json({ message: "passwords do not match" });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -37,7 +37,7 @@ export const signup = async (req, res) => {
     //set cookies
     setCookie(res, accessToken, refreshToken);
 
-    res.status(200).send({
+    res.status(200).json({
       id: newUser._id,
       name: newUser.name,
       email: newUser.email,
@@ -64,14 +64,14 @@ export const login = async (req, res) => {
       //set cookies
       setCookie(res, accessToken, refreshToken);
 
-      return res.status(200).send({
+      return res.status(200).json({
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
       });
     } else {
-      return res.status(401).send("Invalid email or password");
+      return res.status(401).json({ message: "Invalid email or password" });
     }
   } catch (error) {
     console.log("error in login controller:", error.message);
@@ -95,7 +95,7 @@ export const logout = async (req, res) => {
     //clear cookies
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-    res.status(200).send({ message: "Logged out successfully" });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log("error in logout controller:", error.message);
     res.status(500).json({ message: "Unable to logout" });
@@ -107,18 +107,18 @@ export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-      return res.status(401).send({ message: "No refresh token provided" });
+      return res.status(401).json({ message: "No refresh token provided" });
     }
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     const storedToken = await redis.get(`refresh_token: ${decoded.userId}`);
 
     if (storedToken !== refreshToken) {
-      return res.status(401).send({ message: "Invalid refresh token" });
+      return res.status(401).json({ message: "Invalid refresh token" });
     }
 
     const { accessToken } = generateToken(decoded.userId);
     setCookie(res, accessToken);
-    res.status(200).send({ message: "Token refreshed successfully" });
+    res.status(200).json({ message: "Token refreshed successfully" });
   } catch (error) {
     console.log("error in refreshToken controller:", error.message);
     res.status(500).json({ message: "Unable to refresh token" });
@@ -129,9 +129,9 @@ export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.userId);
     if (!user) {
-      return res.status(404).send({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).send({
+    res.status(200).json({
       id: user._id,
       name: user.name,
       email: user.email,

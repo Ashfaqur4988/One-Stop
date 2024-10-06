@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import User from "../model/user.model.js";
 
 export const protectedRoute = (req, res, next) => {
   const accessToken = req.cookies.accessToken;
@@ -18,6 +19,20 @@ export const protectedRoute = (req, res, next) => {
     });
   } catch (error) {
     console.log("error in protectedRoute middleware:", error.message);
+    res.status(500).json({ message: "Unable to authenticate user" });
+  }
+};
+
+export const adminRoute = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (user && user.role === "admin") {
+      next();
+    } else {
+      return res.status(401).json({ message: "Unauthorized - admin only" });
+    }
+  } catch (error) {
+    console.log("error in adminRoute middleware:", error.message);
     res.status(500).json({ message: "Unable to authenticate user" });
   }
 };
