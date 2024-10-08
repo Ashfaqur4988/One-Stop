@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import authRoute from "./routes/auth.route.js";
 import productRoute from "./routes/product.route.js";
 import cartRoute from "./routes/cart.route.js";
+import couponRoute from "./routes/coupon.route.js";
 import { connectDb } from "./utils/db.js";
 import cookieParser from "cookie-parser";
 
@@ -17,6 +18,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
 app.use("/api/cart", cartRoute);
+app.use("/api/coupons", couponRoute);
 
 app.get("/", (req, res) => {
   res.send("Home");
