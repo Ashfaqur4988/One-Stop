@@ -1,6 +1,6 @@
-import Coupon from "../model/coupon.model";
-import Order from "../model/order.model";
-import stripe from "../utils/stripe";
+import Coupon from "../model/coupon.model.js";
+import Order from "../model/order.model.js";
+import stripe from "../utils/stripe.js";
 
 //user will send a request to this and try to create a check out session
 export const createCheckOutSession = async (req, res) => {

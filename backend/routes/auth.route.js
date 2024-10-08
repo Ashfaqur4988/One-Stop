@@ -14,6 +14,6 @@ router.post("/signup", signup);
 router.post("/login", login);
 router.post("/logout", logout);
 router.post("/refresh-token", refreshToken);
-router.get("/get-profile", protectedRoute, adminRoute, getProfile);
+router.get("/get-profile", protectedRoute, getProfile);
 
 export default router;
