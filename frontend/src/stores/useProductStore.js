@@ -20,6 +20,60 @@ export const useProductStore = create((set) => ({
     } catch (error) {
       console.log(error.message);
       toast.error(error.response.data.message || "An error occurred");
+      set({ loading: false });
+    }
+  },
+
+  fetchAllProducts: async () => {
+    set({ loading: true });
+    try {
+      const res = await axios.get("/products/");
+      set({ products: res.data.products, loading: false });
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.response.data.message || "An error occurred");
+    }
+  },
+
+  fetchProductsByCategory: async (category) => {
+    set({ loading: true });
+    try {
+      const res = await axios.get(`/products/category/${category}`);
+      set({ products: res.data.products, loading: false });
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.response.data.message || "An error occurred");
+    }
+  },
+  deleteProduct: async (productId) => {
+    set({ loading: true });
+    try {
+      await axios.delete(`/products/${productId}`);
+      set((prevProducts) => ({
+        products: prevProducts.products.filter(
+          (product) => product._id !== productId
+        ),
+        loading: false,
+      }));
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.response.data.message || "An error occurred");
+    }
+  },
+  toggleFeaturedProduct: async (productId) => {
+    set({ loading: true });
+    try {
+      const res = await axios.patch(`/products/${productId}`);
+      set((prevProducts) => ({
+        products: prevProducts.products.map((product) =>
+          product._id === productId
+            ? { ...product, isFeatured: res.data.isFeatured }
+            : product
+        ),
+      }));
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.response.data.message || "An error occurred");
     }
   },
 }));

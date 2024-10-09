@@ -8,7 +8,7 @@ dotenv.config();
 export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({});
-    res.status(200).json(products);
+    res.status(200).json({ products });
   } catch (error) {
     console.log("error in getAllProducts controller:", error.message);
   }
@@ -69,7 +69,7 @@ export const createProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   try {
-    const product = req.params.id;
+    const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(400).json({ message: "product not found" });
     }
@@ -78,13 +78,13 @@ export const deleteProduct = async (req, res) => {
     if (product.image) {
       const publicId = product.image.split("/").pop().split(".")[0]; //this will get the id of the image
       try {
-        await cloudinary.uploader.destroy(`One Stop/products/${publicId}`);
+        await cloudinary.uploader.destroy(`products/${publicId}`);
         console.log("image deleted successfully");
       } catch (error) {
         console.log(error.message);
       }
     }
-    await Product.findByIdAndDelete(product);
+    await Product.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "product deleted successfully" });
   } catch (error) {
     console.log(error.message);
@@ -110,7 +110,7 @@ export const getProductsByCategory = async (req, res) => {
   const { category } = req.params;
   try {
     const products = await Product.find({ category });
-    res.status(200).json(products);
+    res.status(200).json({ products });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Unable to get products by category" });
@@ -129,7 +129,7 @@ export const toggleFeaturedProduct = async (req, res) => {
 
     //update in redis
     await updateFeaturedProductCache();
-    res.status(200).json({ message: "Product featured status updated" });
+    res.status(200).json(updatedProduct);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: "Unable to toggle featured product" });
