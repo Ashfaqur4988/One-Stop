@@ -28,7 +28,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/products", productRoute);
 app.use("/api/cart", cartRoute);
-app.use("/api/coupons", couponRoute);
+// app.use("/api/coupons", couponRoute);
 app.use("/api/analytics", analyticsRoute);
 app.use("/api/payments", paymentRoute);
 

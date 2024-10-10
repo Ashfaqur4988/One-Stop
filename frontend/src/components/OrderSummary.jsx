@@ -11,19 +11,46 @@ const stripePromise = loadStripe(
 );
 
 const OrderSummary = () => {
-  const { total, subTotal, coupon, cart } = useCartStore();
+  const { total, subTotal, cart } = useCartStore();
   const savings = subTotal - total;
 
   const handlePayment = async () => {
     const stripe = await stripePromise;
-    const res = await axios.post(`/payments/create-checkout-session`, {
-      products: cart,
-      coupon: coupon ? coupon.code : null,
-    });
 
-    const session = res.data;
-    console.log(session, " session here");
+    // Gather customer information
+    //TODO: make this come from user
+    const customer = {
+      name: "Customer Name", // Replace with actual customer name from input
+      address: {
+        line1: "Address Line 1", // Replace with actual address line 1
+        line2: "Address Line 2", // Optional: Replace with actual address line 2
+        city: "City", // Replace with actual city
+        state: "State", // Replace with actual state
+        country: "IN", // ISO 3166-1 alpha-2 code for India
+        postalCode: "Postal Code", // Replace with actual postal code
+      },
+    };
+
+    try {
+      const res = await axios.post(`/payments/create-checkout-session`, {
+        products: cart,
+        customer: customer, // Include the customer object
+      });
+
+      // Redirect to Stripe checkout
+      const { session_id } = res.data;
+      const result = await stripe.redirectToCheckout({ sessionId: session_id });
+
+      if (result.error) {
+        // Handle error here
+        console.error(result.error.message);
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      // Optionally show a user-friendly error message
+    }
   };
+
   return (
     <motion.div
       className="space-y-4 rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm sm:p-6"
@@ -56,7 +83,7 @@ const OrderSummary = () => {
             </dl>
           )}
 
-          {coupon && isApplied && (
+          {/* {coupon && isApplied && (
             <dl className="flex items-center justify-between gap-4">
               <dt className="text-base font-normal text-gray-300">
                 Original Price
@@ -66,7 +93,7 @@ const OrderSummary = () => {
                 {savings.toFixed(2)}
               </dt>
             </dl>
-          )}
+          )} */}
           <dl className="flex items-center justify-between gap-4 border-t border-gray-600 pt-2">
             <dt className="text-base font-bold text-white">Total</dt>
             <dd className="text-base font-bold text-blue-400 flex items-center">

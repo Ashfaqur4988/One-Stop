@@ -5,11 +5,16 @@ import stripe from "../utils/stripe.js";
 //user will send a request to this and try to create a check out session
 export const createCheckOutSession = async (req, res) => {
   try {
-    const { products } = req.body;
+    const { products, customer } = req.body; // Extract customer info from request body
 
     // Validate if products array exists and is not empty
     if (!Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ message: "Invalid or empty products array" });
+    }
+
+    // Validate if customer information is provided
+    if (!customer || !customer.name || !customer.address) {
+      return res.status(400).json({ message: "Customer name and address are required" });
     }
 
     let totalAmount = 0;
@@ -41,6 +46,8 @@ export const createCheckOutSession = async (req, res) => {
       cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
       metadata: {
         userId: req.user._id.toString(),
+        customerName: customer.name, // Store customer name in metadata
+        customerAddress: JSON.stringify(customer.address), // Store customer address in metadata
         products: JSON.stringify(
           products.map((p) => ({
             id: p._id,
@@ -48,6 +55,9 @@ export const createCheckOutSession = async (req, res) => {
             price: p.price,
           }))
         ),
+      },
+      shipping_address_collection: {
+        allowed_countries: ['IN'], // Collect shipping address for India
       },
     });
 
@@ -61,6 +71,7 @@ export const createCheckOutSession = async (req, res) => {
     res.status(500).json({ message: "Unable to create checkout session" });
   }
 };
+
 
 
 
