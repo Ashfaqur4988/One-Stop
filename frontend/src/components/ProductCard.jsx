@@ -1,10 +1,12 @@
-import { ShoppingCart } from "lucide-react";
+import { IndianRupee, ShoppingCart } from "lucide-react";
 import toast from "react-hot-toast";
 import { useUserStore } from "../stores/useUserStore";
 import { useNavigate } from "react-router-dom";
+import { useCartStore } from "../stores/useCartStore";
 
 /* eslint-disable react/prop-types */
 const ProductCard = ({ product }) => {
+  const { addToCart } = useCartStore();
   const { user } = useUserStore();
   const navigate = useNavigate();
   const handleAddToCart = () => {
@@ -12,8 +14,9 @@ const ProductCard = ({ product }) => {
       toast.error("Please login to add to cart", { id: "login" });
       navigate("/login");
       return;
+    } else {
+      addToCart(product);
     }
-    toast.success("Product added to cart");
   };
   return (
     <div className="flex w-full relative flex-col overflow-hidden rounded-lg border border-gray-700 shadow-lg">
@@ -31,8 +34,9 @@ const ProductCard = ({ product }) => {
         </h5>
         <div className="mt-2 mb-5 flex items-center justify-between">
           <p>
-            <span className="text-3xl font-bold text-blue-400">
-              ${product.price}
+            <span className="text-3xl font-bold text-blue-400 flex items-center">
+              <IndianRupee />
+              {product.price}
             </span>
           </p>
         </div>
