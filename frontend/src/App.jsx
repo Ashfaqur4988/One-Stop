@@ -5,11 +5,12 @@ import SignUpPage from "./pages/SignUpPage";
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
 import { useUserStore } from "./stores/useUserStore";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 import AdminPage from "./pages/AdminPage";
-import CategoryPage from "./pages/CategoryPage";
-import CartPage from "./pages/CartPage";
+// import CategoryPage from "./pages/CategoryPage";
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const CartPage = lazy(() => import("./pages/CartPage"));
 import { useCartStore } from "./stores/useCartStore";
 
 function App() {
@@ -21,8 +22,9 @@ function App() {
   }, [checkAuth]);
 
   useEffect(() => {
+    if (!user) return;
     getCartItems();
-  }, [getCartItems]);
+  }, [getCartItems, user]);
 
   // console.log(cart);
   if (checkingAuth) return <LoadingSpinner />;
@@ -43,8 +45,26 @@ function App() {
             element={!user ? <SignUpPage /> : <HomePage />}
           />
           <Route path="/login" element={!user ? <LoginPage /> : <HomePage />} />
-          <Route path="/cart" element={!user ? <LoginPage /> : <CartPage />} />
-          <Route path="/category/:category" element={<CategoryPage />} />
+          <Route
+            path="/cart"
+            element={
+              !user ? (
+                <LoginPage />
+              ) : (
+                <Suspense fallback={<LoadingSpinner />}>
+                  <CartPage />
+                </Suspense>
+              )
+            }
+          />
+          <Route
+            path="/category/:category"
+            element={
+              <Suspense fallback={<LoadingSpinner />}>
+                <CategoryPage />
+              </Suspense>
+            }
+          />
           <Route
             path="/admin-dashboard"
             element={user?.role === "admin" ? <AdminPage /> : <LoginPage />}

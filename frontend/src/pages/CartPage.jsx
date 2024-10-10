@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import CartItem from "../components/CartItem";
 import PeopleAlsoBought from "../components/PeopleAlsoBought";
 import OrderSummary from "../components/OrderSummary";
-import GiftCouponCard from "../components/GiftCouponCard";
 import { Link } from "react-router-dom";
 
 const CartPage = () => {
@@ -39,7 +38,6 @@ const CartPage = () => {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <OrderSummary />
-              <GiftCouponCard />
             </motion.div>
           )}
         </div>
@@ -62,7 +60,7 @@ const EmptyCartUI = () => (
       Looks like you {"haven't"} added anything to your cart yet.
     </p>
     <Link
-      className="mt-4 rounded-md bg-emerald-500 px-6 py-2 text-white transition-colors hover:bg-emerald-600"
+      className="mt-4 rounded-md bg-blue-500 px-6 py-2 text-white transition-colors hover:bg-blue-600"
       to="/"
     >
       Start Shopping
