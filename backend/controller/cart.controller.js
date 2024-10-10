@@ -31,7 +31,7 @@ export const addToCart = async (req, res) => {
 export const removeAllFromCart = async (req, res) => {
   try {
     const { productId } = req.body;
-    const user = req.user.id;
+    const user = req.user;
     if (!productId) {
       user.cartItems = [];
     } else {
@@ -41,6 +41,7 @@ export const removeAllFromCart = async (req, res) => {
     await user.save();
     res.status(200).json({ message: "Product removed from cart" });
   } catch (error) {
+    console.log("from catch of remoeallfrom cart");
     console.log(error.message);
     res.status(500).json({ message: "Unable to remove from cart" });
   }
@@ -73,7 +74,7 @@ export const updateQuantity = async (req, res) => {
   }
 };
 
-export const getCartProducts = async () => {
+export const getCartProducts = async (req, res) => {
   try {
     const products = await Product.find({ _id: { $in: req.user.cartItems } });
 
