@@ -6,6 +6,7 @@ import productRoute from "./routes/product.route.js";
 import cartRoute from "./routes/cart.route.js";
 import couponRoute from "./routes/coupon.route.js";
 import analyticsRoute from "./routes/analytics.route.js";
+import paymentRoute from "./routes/payment.route.js";
 import { connectDb } from "./utils/db.js";
 import cookieParser from "cookie-parser";
 
@@ -29,6 +30,7 @@ app.use("/api/products", productRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/coupons", couponRoute);
 app.use("/api/analytics", analyticsRoute);
+app.use("/api/payments", paymentRoute);
 
 app.get("/", (req, res) => {
   res.send("Home");
