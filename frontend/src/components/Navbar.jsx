@@ -4,7 +4,6 @@ import { useUserStore } from "../stores/useUserStore";
 import { useCartStore } from "../stores/useCartStore";
 
 const Navbar = () => {
-  //TODO: user & admin to be dynamic
   const { user, logout } = useUserStore();
   const isAdmin = user?.role === "admin";
   const { cart } = useCartStore();

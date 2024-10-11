@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "../lib/axios";
 import { toast } from "react-hot-toast";
 
-export const useUserStore = create((set) => ({
+export const useUserStore = create((set, get) => ({
   user: null,
   loading: false,
   checkingAuth: true,
@@ -63,6 +63,50 @@ export const useUserStore = create((set) => ({
       toast.error(error.response.data.message || "An error occurred");
     }
   },
+
+  refreshToken: async () => {
+    if (get().checkingAuth) return;
+    try {
+      const res = await axios.post("/auth/refresh-token");
+      set({ checkingAuth: false });
+      return res.data;
+    } catch (error) {
+      set({ user: null, checkingAuth: false });
+      throw error;
+    }
+  },
 }));
 
-//TODO: implement the axios intercerptors for refreshing the access token
+//TODO: implement the axios interceptors for refreshing the access token
+//a security check we do underneath to check if the access token is expired without the user's knowledge
+//to maintain the session
+let refreshPromise = null;
+
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        //if a refresh is already in progress, wait for it to finish
+        if (refreshPromise) {
+          await refreshPromise;
+          return axios(originalRequest);
+        }
+
+        //start a new refresh process
+        refreshPromise = useUserStore.getState().refreshToken();
+        await refreshPromise;
+        refreshPromise = null;
+
+        return axios(originalRequest);
+      } catch (refreshError) {
+        useUserStore.getState().logout();
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
