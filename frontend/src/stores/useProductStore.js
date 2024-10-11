@@ -76,4 +76,15 @@ export const useProductStore = create((set) => ({
       toast.error(error.response.data.message || "An error occurred");
     }
   },
+
+  fetchFeaturedProducts: async () => {
+    set({ loading: true });
+    try {
+      const res = await axios.get("/products/featured");
+      console.log(res.data);
+      set({ products: res.data, loading: false });
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
 }));
