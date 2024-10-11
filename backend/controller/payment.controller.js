@@ -106,12 +106,7 @@ export const checkoutSuccess = async (req, res) => {
         const session = await stripe.checkout.sessions.retrieve(sessionId);
 
         if(session.payment_status === "paid"){
-            if(session.metadata.couponCode){
-                await Coupon.findOneAndUpdate({
-                    code: session.metadata.couponCode,
-                    userId: session.metadata.userId,
-                }, {isActive: false});
-            }
+           
             //create a new order because the payment just got done
             const products = JSON.parse(session.metadata.products)
             const newOrder = new Order({

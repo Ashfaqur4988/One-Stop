@@ -3,6 +3,7 @@ import Product from "../model/product.model.js";
 import User from "../model/user.model.js";
 
 export const getAnalyticsData = async () => {
+  // console.log("inside analytics controller get analytics data function");
   const totalUser = await User.countDocuments();
   const totalProducts = await Product.countDocuments();
 
@@ -31,6 +32,7 @@ export const getAnalyticsData = async () => {
 
 export const getDailySales = async (startDate, endDate) => {
   try {
+    // console.log("inside analytics controller get daily sales function");
     const dailySales = await Order.aggregate([
       {
         $match: {
@@ -68,6 +70,7 @@ export const getDailySales = async (startDate, endDate) => {
 };
 
 const getDatesInRange = (startDate, endDate) => {
+  // console.log("inside analytics controller get dates in range function");
   const dates = [];
   let currentDate = new Date(startDate);
 

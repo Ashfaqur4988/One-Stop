@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -12,6 +12,8 @@ import AdminPage from "./pages/AdminPage";
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
 import { useCartStore } from "./stores/useCartStore";
+import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
+import PurchaseCancelPage from "./pages/PurchaseCancelPage ";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -68,6 +70,14 @@ function App() {
           <Route
             path="/admin-dashboard"
             element={user?.role === "admin" ? <AdminPage /> : <LoginPage />}
+          />
+          <Route
+            path={`/purchase-success`}
+            element={user ? <PurchaseSuccessPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path={`/purchase-cancel`}
+            element={user ? <PurchaseCancelPage /> : <Navigate to="/login" />}
           />
         </Routes>
       </div>

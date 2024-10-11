@@ -20,6 +20,10 @@ export const useCartStore = create((set, get) => ({
       toast.error(error.response.data.message || "An error occurred");
     }
   },
+
+  clearCart: async () => {
+    set({ cart: [], total: 0, subTotal: 0 });
+  },
   addToCart: async (product) => {
     try {
       await axios.post("/cart", {
@@ -40,6 +44,7 @@ export const useCartStore = create((set, get) => ({
           : [...prevState.cart, { ...product, quantity: 1 }];
         return { cart: newCart };
       });
+      get().calculateTotals();
     } catch (error) {
       console.log(error.message);
       toast.error(error.response.data || "An error occurred");
