@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "../lib/axios";
-import { Users, Package, ShoppingCart, DollarSign } from "lucide-react";
+import { Users, Package, ShoppingCart, IndianRupee } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -71,8 +71,8 @@ const AnalyticsTab = () => {
         />
         <AnalyticsCard
           title="Total Revenue"
-          value={`$${analyticsData.totalRevenue.toLocaleString()}`}
-          icon={DollarSign}
+          value={`${analyticsData.totalRevenue.toLocaleString()}`}
+          icon={IndianRupee}
           color="from--500 to-lime-700"
         />
       </div>
