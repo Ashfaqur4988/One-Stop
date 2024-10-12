@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import path from "path";
 import cors from "cors";
 import authRoute from "./routes/auth.route.js";
 import productRoute from "./routes/product.route.js";
