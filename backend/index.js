@@ -15,6 +15,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8080;
 
+const __dirname = path.resolve();
+
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -32,9 +34,15 @@ app.use("/api/cart", cartRoute);
 app.use("/api/analytics", analyticsRoute);
 app.use("/api/payments", paymentRoute);
 
-app.get("/", (req, res) => {
-  res.send("Home");
-});
+// app.get("/", (req, res) => {
+//   res.send("Home");
+// });
+
+// app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+// });
 
 app.listen(port, () => {
   console.log("server started");

@@ -81,7 +81,7 @@ export const useProductStore = create((set) => ({
     set({ loading: true });
     try {
       const res = await axios.get("/products/featured");
-      console.log(res.data);
+      // console.log(res.data);
       set({ products: res.data, loading: false });
     } catch (error) {
       console.log(error.message);
